@@ -1,13 +1,21 @@
 require("dotenv").config();
+require("express-async-errors");
 
 const express = require("express");
 const app = express();
 
 const connectDB = require("./db/connect");
 
+// middleware
+const notFoundMiddleware = require("./middleware/notFound");
+const errorHandlerMiddleware = require("./middleware/errorHandler");
+
 app.use("/", (req, res) => {
   res.send("Foodie mood API");
 });
+
+app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT || 5000;
 

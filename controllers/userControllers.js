@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Recipe = require("../models/Recipe");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../customErrors");
 const { attachCookiesToResponse } = require("../utils");
@@ -74,9 +75,21 @@ const updatePassword = async (req, res) => {
 };
 //! updatePassword
 
+//! removeUser
+const removeUser = async (req, res) => {
+  const { userId } = req.body;
+
+  await User.findOneAndRemove({ _id: userId });
+  await Recipe.deleteMany({ createdBy: userId });
+
+  res.status(StatusCodes.OK).json({ msg: "User and user's data removed." });
+};
+//! removeUser
+
 module.exports = {
   checkCurrentUser,
   updateName,
   updateEmail,
   updatePassword,
+  removeUser,
 };

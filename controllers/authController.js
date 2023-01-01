@@ -36,8 +36,9 @@ const login = async (req, res) => {
     throw new CustomError.UnauthenticatedError("Invalid credentials");
   }
 
-  const tokenUser = { name: user.name, userId: user._id };
+  const tokenUser = { name: user.name, userId: user._id, email: user.email };
   attachCookiesToResponse({ res, user: tokenUser });
+
   res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 

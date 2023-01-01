@@ -24,7 +24,7 @@ const updateName = async (req, res) => {
 
   await user.save();
 
-  const tokenUser = { name: user.name, userId: user._id };
+  const tokenUser = { name: user.name, userId: user._id, email: user.email };
   attachCookiesToResponse({ res, user: tokenUser });
 
   res.status(StatusCodes.OK).json({ user: tokenUser });
@@ -33,19 +33,28 @@ const updateName = async (req, res) => {
 
 //! updateEmail
 const updateEmail = async (req, res) => {
-  const { email } = req.body;
+  const { email, password } = req.body;
 
   if (!email) {
     throw new CustomError.BadRequestError("Please provide email");
   }
 
+  if (!password) {
+    throw new CustomError.BadRequestError("Please provide password");
+  }
+
   const user = await User.findOne({ _id: req.user.userId });
+  const isPasswordCorrect = await user.comparePasswords(password);
+
+  if (!isPasswordCorrect) {
+    throw new CustomError.UnauthenticatedError("Invalid credentials");
+  }
 
   user.email = email;
 
   await user.save();
 
-  const tokenUser = { name: user.name, userId: user._id };
+  const tokenUser = { name: user.name, userId: user._id, email: user.email };
   attachCookiesToResponse({ res, user: tokenUser });
 
   res.status(StatusCodes.OK).json({ user: tokenUser });
@@ -77,10 +86,21 @@ const updatePassword = async (req, res) => {
 
 //! removeUser
 const removeUser = async (req, res) => {
-  const { userId } = req.body;
+  const { password } = req.body;
 
-  await User.findOneAndRemove({ _id: userId });
-  await Recipe.deleteMany({ createdBy: userId });
+  if (!password) {
+    throw new CustomError.BadRequestError("Please provide password");
+  }
+
+  const user = await User.findOne({ _id: req.user.userId });
+  const isPasswordCorrect = await user.comparePasswords(password);
+
+  if (!isPasswordCorrect) {
+    throw new CustomError.UnauthenticatedError("Invalid credentials");
+  }
+
+  await User.findOneAndRemove({ _id: req.user.userId });
+  await Recipe.deleteMany({ createdBy: req.user.userId });
 
   res.status(StatusCodes.OK).json({ msg: "User and user's data removed." });
 };

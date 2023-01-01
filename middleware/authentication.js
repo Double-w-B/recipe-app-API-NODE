@@ -12,7 +12,7 @@ const authenticateUser = async (req, res, next) => {
     req.user = {
       name: payload.name,
       userId: payload.userId,
-      role: payload.role,
+      email: payload.email,
     };
     next();
   } catch (error) {

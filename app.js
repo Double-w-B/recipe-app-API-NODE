@@ -26,9 +26,7 @@ app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 app.use(cors());
 
-app.get("/", (req, res) => {
-  res.send("Foodie mood API");
-});
+app.use(express.static("./public"));
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/newsletter", newsletterRouter);

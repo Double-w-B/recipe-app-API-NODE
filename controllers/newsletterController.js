@@ -2,7 +2,7 @@ const Newsletter = require("../models/Newsletter");
 const CustomError = require("../customErrors");
 const { StatusCodes } = require("http-status-codes");
 
-const getSingleEmail = async (req, res) => {
+const checkUserEmailInDb = async (req, res) => {
   const { email } = req.body;
 
   if (!email) {
@@ -47,11 +47,11 @@ const removeEmailFromDB = async (req, res) => {
 
   if (!removedEmail) {
     throw new CustomError.NotFoundError(
-      `There is no ${email} in our Newsletter`
+      `There is no '${email}' in our Newsletter DB`
     );
   }
 
   res.status(StatusCodes.OK).json({ removedEmail });
 };
 
-module.exports = { addEmailToDB, removeEmailFromDB, getSingleEmail };
+module.exports = { addEmailToDB, removeEmailFromDB, checkUserEmailInDb };

@@ -3,11 +3,11 @@ const router = express.Router();
 const {
   addEmailToDB,
   removeEmailFromDB,
-  getSingleEmail,
+  checkUserEmailInDb,
 } = require("../controllers/newsletterController");
 
-router.post("/checkEmail", getSingleEmail);
+router.post("/checkEmail", checkUserEmailInDb);
 router.post("/add", addEmailToDB);
-router.post("/remove", removeEmailFromDB);
+router.delete("/remove", removeEmailFromDB);
 
 module.exports = router;
